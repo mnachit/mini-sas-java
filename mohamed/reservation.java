@@ -143,13 +143,14 @@ public class reservation {
         while (true) {
         	clearScreen();
         	System.out.println("\n----------------------------------------------------------------------------");
-            System.out.println("1. Display the list of borrowed books\n");
-            System.out.println("2. rechercher un livre par son titre ou son auteur\n");
-            System.out.println("3. emprunter un livre\n");
-            System.out.println("4. retourner un livre emprunté\n");
-            System.out.println("5. Exit");
-            System.out.println("----------------------------------------------------------------------------\n");
-            System.out.print("Choose an option: \n\n\n");
+        	System.out.println("1. Display the list of borrowed books\n");
+        	System.out.println("2. Search for a book by its title or author\n");
+        	System.out.println("3. Borrow a book\n");
+        	System.out.println("4. Return a borrowed book\n");
+        	System.out.println("5. Exit");
+        	System.out.println("----------------------------------------------------------------------------\n");
+        	System.out.print("Choose an option: \n\n\n");
+
 
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -162,6 +163,8 @@ public class reservation {
                     System.exit(0);
                 case 2:
                 	searchBooks(scanner);
+                case 3:
+                	emprunter(scanner);
                 case 5:
                     System.out.println("Exiting the program.");
                     scanner.close();
@@ -170,6 +173,59 @@ public class reservation {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+	}
+	
+	public void emprunter(Scanner scanner)
+	{
+		System.out.println("\n----------------------------------------------------------------------------");
+		System.out.println("1. Enter ISBN :\n");
+		
+		int isbn = scanner.nextInt();
+        scanner.nextLine();
+        
+        showbyisbn(isbn);
+        
+        
+		
+	}
+	
+	
+	public void showbyisbn(int isbnToSearch)
+	{
+		try {
+	        // Create and execute a SQL query to retrieve a book by ISBN
+	        String query = "SELECT * FROM livre WHERE isbn = ?";
+	        PreparedStatement preparedStatement = Connec.connection().prepareStatement(query);
+	        preparedStatement.setInt(1, isbnToSearch);
+	        ResultSet resultSet = preparedStatement.executeQuery();
+
+	        // Check if any books match the ISBN
+	        if (!resultSet.next()) {
+	            System.out.println("No book found with ISBN: " + isbnToSearch);
+	        } else {
+	            // Print the book record
+	            System.out.println("----------------------------------------------------------------------------");
+	            System.out.printf("| %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
+	            System.out.println("----------------------------------------------------------------------------");
+
+	            do {
+	                int id = resultSet.getInt("id");
+	                int quantity = resultSet.getInt("quantite");
+	                int isbn = resultSet.getInt("isbn");
+	                String titre = resultSet.getString("titre");
+	                String auteur = resultSet.getString("auteur");
+
+	                System.out.printf("| %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
+	            } while (resultSet.next());
+
+	            System.out.println("----------------------------------------------------------------------------");
+	        }
+
+	    } catch (SQLException e) {
+	        System.out.println("Error: " + e.getMessage());
+	    }
+
+//	    return true;
 	}
 
 }
