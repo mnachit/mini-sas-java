@@ -13,6 +13,19 @@ import mohamed.reservation;
 
 public class User {
 	
+	private int id;
+	
+	public static int getId()
+	{
+		return id;
+	}
+	
+	public void setId(int newId)
+	{
+		id = newId;
+	}
+	
+	
 	public static void login(Scanner input) {
         System.out.print("username: ");
         String username = input.nextLine();
@@ -42,8 +55,17 @@ public class User {
                 stmt.setString(2, password);
 
                 rs = stmt.executeQuery();
+                
+                
 
                 if (rs.next()) {
+                	int id = rs.getInt("id");
+                    
+//                    System.out.printf("%d",id);
+                	User user1 = new User();
+                	user1.setId(id);
+                	
+//                	System.out.printf("%d jjjjjj", id);
                     String userType = rs.getString("type");
                     if ("admin".equals(userType)) {
                     	Managerhome.index();
