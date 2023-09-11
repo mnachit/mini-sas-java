@@ -22,7 +22,7 @@ public class reservation {
 	}
 	
 	public static void clearScreen() {
-	    for (int i = 0; i < 50; i++) {
+	    for (int i = 0; i < 6; i++) {
 	        System.out.println();
 	    }
 	}
@@ -33,22 +33,24 @@ public class reservation {
 	    
 	    Date currentDate = new Date();
 	    Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 7);
-
-        // Convert the Calendar date to a java.util.Date
+        calendar.add(Calendar.DAY_OF_MONTH, 0);
         java.util.Date utilReturnDate = calendar.getTime();
-
-        // Convert the java.util.Date to java.sql.Date
         java.sql.Date returnDate = new java.sql.Date(utilReturnDate.getTime());
         
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.add(Calendar.DAY_OF_MONTH, 8);
+        java.util.Date utilReturnDate1 = calendar1.getTime();
+        java.sql.Date returnDate1 = new java.sql.Date(utilReturnDate1.getTime());
+        
 	    try {
-	        String sql = "INSERT INTO reservation (isbn, user, date) VALUES (?, ?, ?)";
+	        String sql = "INSERT INTO reservation (isbn, user, date, date_limit) VALUES (?, ?, ?, ?)";
 
 	        preparedStatement = conn.connection().prepareStatement(sql);
 
 	        preparedStatement.setInt(1, isbn);
 	        preparedStatement.setInt(2, userId);
 	        preparedStatement.setDate(3, returnDate);
+	        preparedStatement.setDate(4, returnDate1);
 
 	        // Execute the INSERT statement
 	        int rowsInserted = preparedStatement.executeUpdate();
@@ -96,19 +98,23 @@ public class reservation {
 	}
 
 	
-	public void searchBooks(Scanner scanner) {
+	public void searchBooks(Scanner scanner, int iduser) {
 		
 		Connec conn = new Connec();
 //		clearScreen();
-        System.out.println("Choose search criteria:");
-        System.out.println("1. Search by title");
-        System.out.println("2. Search by author");
-        System.out.print("Enter your choice (1 or 2): \n -->");
+		System.out.println("                                        +--------------------------+");
+		System.out.println("                                        |   Choose search criteria |");
+		System.out.println("                                        +--------------------------+");
+		System.out.println("                                        | 1. Search by title       |");
+		System.out.println("                                        | 2. Search by author      |");
+		System.out.println("                                        +--------------------------+\n");
+		System.out.print("  Enter your choice (1 or 2):\n\n");
+
 
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume the newline
 
-        System.out.print("Enter search query: ");
+        System.out.print("Enter search query:     =>");
         String searchQuery = scanner.nextLine();
 
         String sql = "";
@@ -126,9 +132,9 @@ public class reservation {
             preparedStatement.setString(1, "%" + searchQuery + "%");
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            System.out.println("----------------------------------------------------------------------------");
-		    System.out.printf("| %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
-		    System.out.println("----------------------------------------------------------------------------");
+            System.out.println("                                  ----------------------------------------------------------------------------");
+		    System.out.printf("                                  | %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
+		    System.out.println("                                  ----------------------------------------------------------------------------");
             
             while (resultSet.next()) {
 		        int id = resultSet.getInt("id");
@@ -137,20 +143,26 @@ public class reservation {
 		        String titre = resultSet.getString("titre");
 		        String auteur = resultSet.getString("auteur");
 
-		        System.out.printf("| %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
+		        System.out.printf("                                  | %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
 		    }
             
-            System.out.println("----------------------------------------------------------------------------\n");
+            System.out.println("                                  ----------------------------------------------------------------------------\n");
             
             while (true) {
-            	System.out.println("\n1. Go to menu");
-                System.out.println("\n2. logout");
+            	System.out.println("\n                                  +-----------------------+");
+            	System.out.println("                                  |        Main Menu      |");
+            	System.out.println("                                  +-----------------------+");
+            	System.out.println("                                  | 1. Go to menu         |");
+            	System.out.println("                                  | 2. Logout             |");
+            	System.out.println("                                  +-----------------------+");
+            	System.out.print("Enter your choice (1 or 2): =>  ");
+
                 int ss = scanner.nextInt();
                 scanner.nextLine();
 
                 switch (ss) {
                     case 1:
-                    	index(scanner);
+                    	index(scanner, iduser);
                         System.exit(0);
                     case 2:
                     	System.out.println("Exiting the program.");
@@ -167,37 +179,86 @@ public class reservation {
     }
 	
 	
-	public void index(Scanner scanner)
+	public void index(Scanner scanner, int id)
 	{
 //		Scanner scanner = new Scanner(System.in);
 
         while (true) {
         	clearScreen();
-        	System.out.println("\n----------------------------------------------------------------------------");
-        	System.out.println("1. Display the list of borrowed books\n");
-        	System.out.println("2. Search for a book by its title or author\n");
-        	System.out.println("3. Borrow a book\n");
-        	System.out.println("4. Return a borrowed book\n");
-        	System.out.println("5. Exit");
-        	System.out.println("----------------------------------------------------------------------------\n");
-        	System.out.print("Choose an option: \n\n\n");
+        	System.out.printf(""
+        			+ "\n"
+        			+ "                                                                                                                           \n"
+        			+ "                                                                                                                           \n"
+        			+ "                          ,--,                                ____                    ,---,                                \n"
+        			+ "                        ,--.'|                              ,'  , `.                ,--.' |                                \n"
+        			+ "         .---.          |  | :               ,---.       ,-+-,.' _ |                |  |  :                __  ,-.         \n"
+        			+ "        /. ./|          :  : '              '   ,'\\   ,-+-. ;   , ||                :  :  :              ,' ,'/ /|         \n"
+        			+ "     .-'-. ' |   ,---.  |  ' |      ,---.  /   /   | ,--.'|'   |  || ,---.          :  |  |,--.   ,---.  '  | |' | ,---.   \n"
+        			+ "    /___/ \\: |  /     \\ '  | |     /     \\.   ; ,. :|   |  ,', |  |,/     \\         |  :  '   |  /     \\ |  |   ,'/     \\  \n"
+        			+ " .-'.. '   ' . /    /  ||  | :    /    / ''   | |: :|   | /  | |--'/    /  |        |  |   /' : /    /  |'  :  / /    /  | \n"
+        			+ "/___/ \\:     '.    ' / |'  : |__ .    ' / '   | .; :|   : |  | ,  .    ' / |        '  :  | | |.    ' / ||  | ' .    ' / | \n"
+        			+ ".   \\  ' .\\   '   ;   /||  | '.'|'   ; :__|   :    ||   : |  |/   '   ;   /|        |  |  ' | :'   ;   /|;  : | '   ;   /| \n"
+        			+ " \\   \\   ' \\ |'   |  / |;  :    ;'   | '.'|\\   \\  / |   | |`-'    '   |  / |        |  :  :_:,''   |  / ||  , ; '   |  / | \n"
+        			+ "  \\   \\  |--\" |   :    ||  ,   / |   :    : `----'  |   ;/        |   :    |        |  | ,'    |   :    | ---'  |   :    | \n"
+        			+ "   \\   \\ |     \\   \\  /  ---`-'   \\   \\  /          '---'          \\   \\  /         `--''       \\   \\  /         \\   \\  /  \n"
+        			+ "    '---\"       `----'             `----'                           `----'                       `----'           `----'   \n"
+        			+ "                                                                                                                           \n"
+        			+ "");
+        	System.out.println("\n                                        -----------------------------------------------");
+        	System.out.println("                                        1. Display the list of borrowed books\n");
+        	System.out.println("                                        2. Search for a book by its title or author\n");
+        	System.out.println("                                        3. Borrow a book\n");
+        	System.out.println("                                        4. Return a borrowed book\n");
+        	System.out.println("                                        5. Exit");
+        	System.out.println("                                          -----------------------------------------------\n");
+        	System.out.print("Choose an option: => \n\n");
 
-
+        	
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             home Managerhome = new home();
             switch (choice) {
                 case 1:
-                	Managerhome.show(scanner);
-                	Managerhome.showU(scanner);
+//                	Managerhome.show(scanner);
+                	Managerhome.showU(scanner, id);
                     System.exit(0);
                 case 2:
-                	searchBooks(scanner);
+                	searchBooks(scanner,id);
                 case 3:
-                	emprunter(scanner);
+                	emprunter(scanner, id);
+                case 4:
+                	returnbook(scanner, id);
+                	
                 case 5:
-                    System.out.println("Exiting the program.");
+                    System.out.println(""
+                    		+ "\n"
+                    		+ "                                                                                                                             \n"
+                    		+ "                                                                   dddddddd                                                  \n"
+                    		+ "        GGGGGGGGGGGGG                                              d::::::d     BBBBBBBBBBBBBBBBB                            \n"
+                    		+ "     GGG::::::::::::G                                              d::::::d     B::::::::::::::::B                           \n"
+                    		+ "   GG:::::::::::::::G                                              d::::::d     B::::::BBBBBB:::::B                          \n"
+                    		+ "  G:::::GGGGGGGG::::G                                              d:::::d      BB:::::B     B:::::B                         \n"
+                    		+ " G:::::G       GGGGGG   ooooooooooo      ooooooooooo       ddddddddd:::::d        B::::B     B:::::Byyyyyyy           yyyyyyy\n"
+                    		+ "G:::::G               oo:::::::::::oo  oo:::::::::::oo   dd::::::::::::::d        B::::B     B:::::B y:::::y         y:::::y \n"
+                    		+ "G:::::G              o:::::::::::::::oo:::::::::::::::o d::::::::::::::::d        B::::BBBBBB:::::B   y:::::y       y:::::y  \n"
+                    		+ "G:::::G    GGGGGGGGGGo:::::ooooo:::::oo:::::ooooo:::::od:::::::ddddd:::::d        B:::::::::::::BB     y:::::y     y:::::y   \n"
+                    		+ "G:::::G    G::::::::Go::::o     o::::oo::::o     o::::od::::::d    d:::::d        B::::BBBBBB:::::B     y:::::y   y:::::y    \n"
+                    		+ "G:::::G    GGGGG::::Go::::o     o::::oo::::o     o::::od:::::d     d:::::d        B::::B     B:::::B     y:::::y y:::::y     \n"
+                    		+ "G:::::G        G::::Go::::o     o::::oo::::o     o::::od:::::d     d:::::d        B::::B     B:::::B      y:::::y:::::y      \n"
+                    		+ " G:::::G       G::::Go::::o     o::::oo::::o     o::::od:::::d     d:::::d        B::::B     B:::::B       y:::::::::y       \n"
+                    		+ "  G:::::GGGGGGGG::::Go:::::ooooo:::::oo:::::ooooo:::::od::::::ddddd::::::dd     BB:::::BBBBBB::::::B        y:::::::y        \n"
+                    		+ "   GG:::::::::::::::Go:::::::::::::::oo:::::::::::::::o d:::::::::::::::::d     B:::::::::::::::::B          y:::::y         \n"
+                    		+ "     GGG::::::GGG:::G oo:::::::::::oo  oo:::::::::::oo   d:::::::::ddd::::d     B::::::::::::::::B          y:::::y          \n"
+                    		+ "        GGGGGG   GGGG   ooooooooooo      ooooooooooo      ddddddddd   ddddd     BBBBBBBBBBBBBBBBB          y:::::y           \n"
+                    		+ "                                                                                                          y:::::y            \n"
+                    		+ "                                                                                                         y:::::y             \n"
+                    		+ "                                                                                                        y:::::y              \n"
+                    		+ "                                                                                                       y:::::y               \n"
+                    		+ "                                                                                                      yyyyyyy                \n"
+                    		+ "                                                                                                                             \n"
+                    		+ "                                                                                                                             \n"
+                    		+ "");
                     scanner.close();
                     System.exit(0);
                 default:
@@ -206,11 +267,107 @@ public class reservation {
         }
 	}
 	
-	public void emprunter(Scanner scanner)
+//	public void returnbook(Scanner scanner)
+//	{
+//		
+//	}
+	
+	public void returnbook(Scanner scanner, int userId) {
+		String query3 = "SELECT l.isbn, r.date, r.statut, r.user FROM reservation r JOIN livre l ON r.isbn = l.id WHERE r.user = ? AND r.statut = 'reserve'";
+		try {
+		    PreparedStatement preparedStatement3 = Connec.connection().prepareStatement(query3);
+		    preparedStatement3.setInt(1, userId);
+		    ResultSet resultSet3 = preparedStatement3.executeQuery();
+
+		    // Print table header
+		    System.out.println("                                  +--------------------------------+-------------+--------------+");
+		    System.out.println("                                  |           ISBN                 | Date return |  Status      |");
+		    System.out.println("                                  +--------------------------------+-------------+--------------+");
+
+		    // Iterate through the ResultSet and print rows
+		    while (resultSet3.next()) {
+		        int isbn = resultSet3.getInt("isbn");
+		        String date = resultSet3.getString("date");
+		        String status = resultSet3.getString("statut");
+
+		        System.out.printf("                                  | %-30d | %-7s  | %-10s   |\n", isbn, date, status);
+		    }
+
+		    // Print table footer
+		    System.out.println("                                  +--------------------------------+---------+------------------+");
+		    
+		    
+		    System.out.println("\n----------------------------------------------------------------");
+		    System.out.println("1. Enter ISBN: => ");
+		    
+		    int isbnvalid = scanner.nextInt();
+		    scanner.nextLine();
+		    
+		    String query4 = "SELECT id FROM livre WHERE isbn = ?";
+		    PreparedStatement preparedStatement4 = Connec.connection().prepareStatement(query4);
+		    preparedStatement4.setInt(1, isbnvalid);
+		    ResultSet resultSet4 = preparedStatement4.executeQuery();
+		    
+		    if (resultSet4.next()) {
+		    	
+		    	Date currentDate = new Date();
+			    Calendar calendar = Calendar.getInstance();
+		        calendar.add(Calendar.DAY_OF_MONTH, 0);
+		        java.util.Date utilReturnDate = calendar.getTime();
+		        java.sql.Date returnDate = new java.sql.Date(utilReturnDate.getTime());
+		        
+		    	int sibnupdate = resultSet4.getInt("id");
+		        // Update the reservation status to 'unavailable' for the specified ISBN and 'reserve' status
+		    	String updateQuery = "UPDATE reservation SET statut = 'unavailable', date_return = ? WHERE isbn = ? AND statut = 'reserve'";
+		        PreparedStatement preparedStatement5 = Connec.connection().prepareStatement(updateQuery);
+		        preparedStatement5.setDate(1, returnDate);
+		        preparedStatement5.setInt(2, sibnupdate);
+		        int rowsUpdated = preparedStatement5.executeUpdate();
+
+		        if (rowsUpdated > 0) {
+		        	System.out.println("                                  +-----------------------------+");
+		        	System.out.println("                                  |         Menu Options        |");
+		        	System.out.println("                                  +-----------------------------+");
+		        	System.out.println("                                  | 1. Go to Menu               |");
+		        	System.out.println("                                  | 2. Logout                   |");
+		        	System.out.println("                                  +-----------------------------+");
+		        	System.out.print("\n\nPlease select an option (1 or 2): =>");
+		        	
+		        	
+		        	int Menu = scanner.nextInt();
+				    scanner.nextLine();
+				    
+				    switch(Menu)
+				    {
+				    	case 1:
+				    		reservation user = new reservation();
+	                    	user.index(scanner, userId);
+				    	case 2:
+				    		System.out.println("Exiting the program.");
+		                    scanner.close();
+		                    System.exit(0);
+
+		                default:
+		                    System.out.println("Invalid choice. Please try again.");
+				    }
+
+		        } else {
+		            System.out.println("No reservations found for the given ISBN and status.");
+		        }
+		    } else {
+		        System.out.println("No book found with the given ISBN.");
+		    }
+		} catch (SQLException e) {
+		    System.out.println("Error: " + e.getMessage());
+		}
+
+	}
+
+	public void emprunter(Scanner scanner, int iduser)
 	{
 		home Managerhome = new home();
 		Managerhome.show(scanner);
-		System.out.println("\n----------------------------------------------------------------------------");
+		System.out.println("\n                                        ----------------------------------------------------------------------------");
 		System.out.println("1. Enter ISBN :\n");
 		
 		int isbn = scanner.nextInt();
@@ -227,14 +384,13 @@ public class reservation {
                 int quantite = resultSet.getInt("quantite");
                 if (quantite > 0) {
                 	showbyisbn(isbn);
-                    System.out.println("The book is available.");
                     
                     Date currentDate = new Date();
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(currentDate);
 
                     // Add 7 days to the current date
-                    calendar.add(Calendar.DAY_OF_MONTH, 7);
+                    calendar.add(Calendar.DAY_OF_MONTH, 8);
                     Date returnDate = calendar.getTime();
 
                     // Format the dates as strings
@@ -243,10 +399,19 @@ public class reservation {
                     String returnDateStr = dateFormat.format(returnDate);
 
                     // Print the message
-                    System.out.println("1. Are you sure? You must return the book on: " + returnDateStr);
-                    System.out.println("\n\n2. Try again !:\n");
-                    System.out.println("\n\n3. Go to menu ?:\n");
+                    System.out.println("                                       ------------------------------------------------------------");
+                    System.out.println("                                       |                Return Book Confirmation                  |");
+                    System.out.println("                                       ------------------------------------------------------------");
+                    System.out.println("                                       |                  The book is available.                  |");
+                    System.out.println("                                       |                                                          |");
+                    System.out.println("                                       | 1. Are you sure? You must return the book on: " + returnDateStr + " |");
+                    System.out.println("                                       | 2. Try again!                                            |");
+                    System.out.println("                                       | 3. Go to menu?                                           |");
+                    System.out.println("                                       ------------------------------------------------------------");
+
+
                     
+                    System.out.print("Choose an option: => ");
                     int N1 = scanner.nextInt();
                     scanner.nextLine();
                     
@@ -261,10 +426,10 @@ public class reservation {
                     	    if (resultSet1.next()) {
                     	        int num = resultSet1.getInt("id");
 //                    	        User user = new User();
-                    	        int dd = model.User.getId();
+//                    	        int dd = user.getId();
                             	
-                            	System.out.printf("%d",dd);
-//                    	        makeReservation(num,2, isbn);
+//                            	System.out.printf("%d",iduser);
+                    	        makeReservation(num,iduser , isbn);
                     	        // You can call makeReservation(num, 2) here if needed.
                     	    } else {
                     	        System.out.println("No book found with the given ISBN.");
@@ -276,24 +441,33 @@ public class reservation {
                     	}
 
                     case 2:
-                    	emprunter(scanner);
+                    	emprunter(scanner, iduser);
                     case 3:
-                    	index(scanner);
+                    	index(scanner, iduser);
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
                 } else {
-                    System.out.println("The book is not available (quantity = 0).\n\n1. Try again !\n\n2. Go to menu !\n\n3. Logout");
+                	System.out.println("                                       +-----------------------------------------------------+");
+                	System.out.println("                                       |               Book Availability Alert               |");
+                	System.out.println("                                       +-----------------------------------------------------+");
+                	System.out.println("                                       | The book is not available (quantity = 0).           |");
+                	System.out.println("                                       |                                                     |");
+                	System.out.println("                                       | 1. Try again!                                       |");
+                	System.out.println("                                       | 2. Go to menu!                                      |");
+                	System.out.println("                                       | 3. Logout                                           |");
+                	System.out.println("                                       +-----------------------------------------------------+");
+
                     
+                	System.out.print("\n\nChoose an option: => ");
                     int N2 = scanner.nextInt();
                     scanner.nextLine();
                     
-                    System.out.print("Choose an option: \n\n\n");
                     switch (N2) {
                     case 1:
-                    	emprunter(scanner);    
+                    	emprunter(scanner, iduser);    
                     case 2:
-                    	index(scanner);
+                    	index(scanner, iduser);
                     case 3:
                     	System.out.println("Exiting the program.");
                         scanner.close();
@@ -302,6 +476,29 @@ public class reservation {
                 }
             } else {
                 System.out.println("No book found with the given ISBN.");
+                System.out.println("                                       +-----------------------------------------------------+");
+            	System.out.println("                                       |        No book found with the given ISBN            |");
+            	System.out.println("                                       +-----------------------------------------------------+");
+            	System.out.println("                                       |                                                     |");
+            	System.out.println("                                       | 1. Try again!                                       |");
+            	System.out.println("                                       | 2. Go to menu!                                      |");
+            	System.out.println("                                       | 3. Logout                                           |");
+            	System.out.println("                                       +-----------------------------------------------------+");
+            	
+            	System.out.print("\n\nChoose an option: => ");
+                int N2 = scanner.nextInt();
+                scanner.nextLine();
+                
+                switch (N2) {
+                case 1:
+                	emprunter(scanner, iduser);    
+                case 2:
+                	index(scanner, iduser);
+                case 3:
+                	System.out.println("Exiting the program.");
+                    scanner.close();
+                    System.exit(0);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -328,9 +525,9 @@ public class reservation {
 	            System.out.println("No book found with ISBN: " + isbnToSearch);
 	        } else {
 	            // Print the book record
-	            System.out.println("----------------------------------------------------------------------------");
-	            System.out.printf("| %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
-	            System.out.println("----------------------------------------------------------------------------");
+	            System.out.println("                                       ----------------------------------------------------------------------------");
+	            System.out.printf("                                       | %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
+	            System.out.println("                                       ----------------------------------------------------------------------------");
 
 	            do {
 	                int id = resultSet.getInt("id");
@@ -339,10 +536,10 @@ public class reservation {
 	                String titre = resultSet.getString("titre");
 	                String auteur = resultSet.getString("auteur");
 
-	                System.out.printf("| %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
+	                System.out.printf("                                       | %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
 	            } while (resultSet.next());
 
-	            System.out.println("----------------------------------------------------------------------------");
+	            System.out.println("                                       ----------------------------------------------------------------------------");
 	        }
 
 	    } catch (SQLException e) {

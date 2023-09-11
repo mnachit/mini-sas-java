@@ -15,7 +15,7 @@ public class User {
 	
 	private int id;
 	
-	public static int getId()
+	public int getId()
 	{
 		return id;
 	}
@@ -27,10 +27,23 @@ public class User {
 	
 	
 	public static void login(Scanner input) {
-        System.out.print("username: ");
+		
+		for (int i = 0; i < 5; i++) {
+	        System.out.println();
+	    }
+		System.out.println("                                        +-----------------------------+");
+		System.out.println("                                        Welcome to the Login System");
+		System.out.println("                                        +-----------------------------+");
+        
+		System.out.println("                                        please Enter Username :\n");
+        System.out.print("| Username: =>  ");
         String username = input.nextLine();
-        System.out.print("Password: ");
+        
+        System.out.println("                                        please Enter Password :\n");
+        System.out.print("| Password: =>  ");
         String password = input.nextLine();
+
+        System.out.println("                                        +-----------------------------+");
         
         CheckUser Manager = new CheckUser();
         home Managerhome = new home();
@@ -71,7 +84,7 @@ public class User {
                     	Managerhome.index();
                     } else {
                     	reservation user = new reservation();
-                    	user.index(input);
+                    	user.index(input, id);
                     }
                 }
             }

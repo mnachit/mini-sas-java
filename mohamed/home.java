@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 
 public class home {
 	public static void clearScreen() {
-	    for (int i = 0; i < 50; i++) {
+	    for (int i = 0; i < 1; i++) {
 	        System.out.println();
 	    }
 	}
@@ -47,16 +47,16 @@ public class home {
 
         while (true) {
         	clearScreen();
-        	System.out.println("\n----------------------------------------------------------------------------");
-            System.out.println("1. Add a new book");
-            System.out.println("2. Display the list of borrowed books");
-            System.out.println("3. Delete a book");
-            System.out.println("4. Edit information in an existing book");
-            System.out.println("5. Generate a report containing statistics");
-            System.out.println("6. View the full list of available books");
-            System.out.println("7. Search for a book by its title or author");
-            System.out.println("8. Exit");
-            System.out.println("----------------------------------------------------------------------------\n");
+        	System.out.println("\n                                        ----------------------------------------------------------------------------");
+            System.out.println("                                        1. Add a new book");
+            System.out.println("                                        2. Display the list of borrowed books");
+            System.out.println("                                        3. Delete a book");
+            System.out.println("                                        4. Edit information in an existing book");
+            System.out.println("                                        5. Generate a report containing statistics");
+            System.out.println("                                        6. View the full list of available books");
+            System.out.println("                                        7. Search for a book by its title or author");
+            System.out.println("                                        8. Exit");
+            System.out.println("                                          ----------------------------------------------------------------------------\n");
             System.out.print("Choose an option: \n\n\n");
 
             int choice = scanner.nextInt();
@@ -215,9 +215,9 @@ public class home {
 		    ResultSet resultSet = preparedStatement.executeQuery();
 
 		    // Print the book records
-		    System.out.println("----------------------------------------------------------------------------");
-		    System.out.printf("| %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
-		    System.out.println("----------------------------------------------------------------------------");
+		    System.out.println("                                        ----------------------------------------------------------------------------");
+		    System.out.printf("                                        | %-5s | %-10s | %-15s | %-15s | %-15s |\n", "ID", "Quantity", "ISBN", "Title", "Author");
+		    System.out.println("                                        ----------------------------------------------------------------------------");
 
 		    while (resultSet.next()) {
 		        int id = resultSet.getInt("id");
@@ -226,10 +226,10 @@ public class home {
 		        String titre = resultSet.getString("titre");
 		        String auteur = resultSet.getString("auteur");
 
-		        System.out.printf("| %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
+		        System.out.printf("                                        | %-5d | %-10d | %-15d | %-15s | %-15s |\n", id, quantity, isbn, titre, auteur);
 		    }
 
-		    System.out.println("----------------------------------------------------------------------------\n");
+		    System.out.println("                                        ----------------------------------------------------------------------------\n");
 		    
 
 	    } catch (SQLException e) {
@@ -241,32 +241,36 @@ public class home {
 	public boolean show(Scanner scanner)
 	{
 		
-		clearScreen();
+//		clearScreen();
 		showall(scanner);
 		return true;
 	}
 	
-	public boolean showU(Scanner scanner)
+	public boolean showU(Scanner scanner, int id)
 	{
 		reservation Managerlog = new reservation();
-		clearScreen();
+//		clearScreen();
+		System.out.println("                                        Welcome to Display the list of borrowed books");
+		System.out.println("                                        +-------------------------------------------+\n\n");
 		showall(scanner);
 		while (true) {
-        	System.out.println("\n1. Go to menu");
-            System.out.println("\n2. logout");
+        	System.out.println("\n                                        1. Go to menu");
+            System.out.println("\n                                        2. logout");
+            
+            System.out.print("Choose an option: => ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                	Managerlog.index(scanner);
+                	Managerlog.index(scanner, id);
                     System.exit(0);
                 case 2:
-                	System.out.println("Exiting the program.");
+                	System.out.println("                                        Exiting the program.");
                     scanner.close();
                     System.exit(0);
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("                                        Invalid choice. Please try again.");
                     return true;
         }
         }
@@ -294,6 +298,26 @@ public class home {
 	        if (rowsDeleted > 0) {
 	        	clearScreen();
 	            System.out.println("----------> The livre with ISBN " + isbn + " was deleted successfully!<----\n\n");
+	            
+	            home Managerlog1 = new home();
+	    		while (true) {
+	            	System.out.println("\n1. Go to menu");
+	                System.out.println("\n2. logout");
+	                int choice = scanner.nextInt();
+	                scanner.nextLine();
+
+	                switch (choice) {
+	                    case 1:
+	                    	Managerlog1.index();
+	                        System.exit(0);
+	                    case 2:
+	                    	System.out.println("Exiting the program.");
+	                        scanner.close();
+	                        System.exit(0);
+	                    default:
+	                        System.out.println("Invalid choice. Please try again.");
+	            }
+	            }
 	            
 	        } else {
 	            System.out.println("----------\n\nNo livre found with ISBN " + isbn);
